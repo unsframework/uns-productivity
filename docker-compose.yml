@@ -1,0 +1,23 @@
+# Docker Compose for uns-productivity — Production Run Logger
+# Requires: docker network create fnkit-network
+# Requires: fnkit-cache running (fnkit cache start)
+# Requires: fnkit-postgres running
+# Requires: uns-framework running (populating cache)
+
+services:
+  uns-productivity:
+    build: .
+    container_name: uns-productivity
+    environment:
+      - FUNCTION_TARGET=uns-productivity
+      - DATABASE_URL=postgres://fnkit:fnkit@fnkit-postgres:5432/fnkit?sslmode=disable
+      - CACHE_URL=redis://fnkit-cache:6379
+      - CACHE_KEY_PREFIX=uns
+    networks:
+      - fnkit-network
+    restart: unless-stopped
+
+networks:
+  fnkit-network:
+    name: fnkit-network
+    external: true
